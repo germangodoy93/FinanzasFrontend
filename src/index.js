@@ -4,10 +4,38 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {error: null, info: null};
+  }
+  static getDerivedStateFromError(error) {
+    return {error};
+  }
+  componentDidCatch(error, info) {
+    console.error("ErrorBoundary caught:", error, info);
+    this.setState({info});
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{padding:20,color:'#f00'}}>
+          <h1>Se ha producido un error</h1>
+          <pre>{this.state.error.toString()}</pre>
+          <details style={{whiteSpace:'pre-wrap'}}>{this.state.info?.componentStack}</details>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>
 );
 
